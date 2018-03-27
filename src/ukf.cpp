@@ -74,8 +74,8 @@ UKF::UKF() {
   weights_ = VectorXd(2*n_aug_+1);
   
   // Noise matrices
-  R_radar = MatrixXd(3,3);
-  R_laser = MatrixXd(2,2);
+  //R_radar = MatrixXd(3,3);
+  //R_laser = MatrixXd(2,2);
   
   // Start time
   time_us_  = 0.0;
@@ -143,7 +143,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
     }
     // done initializing, no need to predict or update
-    init = true;
+    is_initialized_ = true;
     time_us_  = meas_package.timestamp_;
     return;
     }
