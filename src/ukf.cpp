@@ -118,10 +118,10 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
             0, 0, 0, std_radphi_, 0,
             0, 0, 0, 0, std_radphi_;
       
-      // Create R for update noise later
-      R_radar << std_radr_*std_radr_, 0, 0,
-                 0, std_radphi_*std_radphi_, 0,
-                 0, 0, std_radrd_*std_radrd_;
+      // // Create R for update noise later
+      // R_radar << std_radr_*std_radr_, 0, 0,
+      //            0, std_radphi_*std_radphi_, 0,
+      //            0, 0, std_radrd_*std_radrd_;
 
     }
     else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
@@ -138,8 +138,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
             0, 0, 0, 0, 1;
       
       // Create R for update noise later
-      R_laser << std_laspx_*std_laspx_, 0,
-                 0, std_laspy_*std_laspy_;
+      // R_laser << std_laspx_*std_laspx_, 0,
+      //            0, std_laspy_*std_laspy_;
 
     }
     // done initializing, no need to predict or update

@@ -73,6 +73,8 @@ public:
   //NIS for laser
   double NIS_laser_;
 
+  
+
 
   /**
    * Constructor
