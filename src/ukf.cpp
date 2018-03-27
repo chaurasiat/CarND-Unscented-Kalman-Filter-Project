@@ -322,7 +322,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   You'll also need to calculate the lidar NIS.
   */
   //set measurement dimension, lidar can measure px and py
-  /extract measurement as VectorXd
+  //extract measurement as VectorXd
   VectorXd z = meas_package.raw_measurements_;
 
   //set measurement dimension, lidar can measure p_x and p_y
