@@ -259,7 +259,7 @@ void UKF::Prediction(double delta_t) {
   for(int i=0;i<2*n_aug_+1;i++){
     VectorXd x_diff=Xsig_pred_.col(i)-x_;
     //x_diff(3)=NormalizeAngle(x_diff(3));
-    x_diff(3)=atan2( sin(x_diff(3)),cos(x_diff(3)))
+    x_diff(3)=atan2( sin(x_diff(3)),cos(x_diff(3)));
     P_+=weights_(i)*x_diff*x_diff.transpose();
   }
 }
