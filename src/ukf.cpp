@@ -410,9 +410,11 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   Complete this function! Use radar data to update the belief about the object's
   position. Modify the state vector, x_, and covariance, P_.
-
+  
   You'll also need to calculate the radar NIS.
   */
+  //extract measurement as VectorXd
+  VectorXd z = meas_package.raw_measurements_;
   int n_z = 3;
 
   //create matrix for sigma points in measurement space
