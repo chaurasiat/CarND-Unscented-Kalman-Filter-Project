@@ -170,6 +170,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
  * @param {double} delta_t the change in time (in seconds) between the last
  * measurement and this one.
  */
+
 void UKF::Prediction(double delta_t) {
   /**
   TODO:
@@ -254,10 +255,10 @@ void UKF::Prediction(double delta_t) {
   }
 //Predict the new state covariance matrix
   P_.fill(0.0);
-  Tools tools;
+  //Tools tools;
   for(int i=0;i<2*n_aug_+1;i++){
     VectorXd x_diff=Xsig_pred_.col(i)-x_;
-    x_diff(3)=tools.NormalizeAngle(x_diff(3));
+    x_diff(3)=NormalizeAngle(x_diff(3));
     P_+=weights_(i)*x_diff*x_diff.transpose();
   }
 }
@@ -370,3 +371,6 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
 }
+double UKF::NormalizeAngle(double phi){
+  return atan2( sin(phi),cos(phi));
+ }
