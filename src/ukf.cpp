@@ -12,6 +12,7 @@ using std::vector;
  * This is scaffolding, do not modify
  */
 UKF::UKF() {
+  cout<<"hello";
   // if this is false, laser measurements will be ignored (except during init)
   use_laser_ = true;
 
@@ -54,6 +55,35 @@ UKF::UKF() {
 
   Hint: one or more values initialized above might be wildly off...
   */
+  // Not initialized until first process measurement
+  init = false;
+  
+  // Set state dimension
+  n_x_ = 5;
+  
+  // Set augmented dimension
+  n_aug_ = 7;
+  
+  // Define spreading parameter
+  lambda_ = 0;
+  
+  // Matrix to hold sigma points
+  Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
+  
+  // Vector for weights
+  weights_ = VectorXd(2*n_aug_+1);
+  
+  // Noise matrices
+  R_radar = MatrixXd(3,3);
+  R_laser = MatrixXd(2,2);
+  
+  // Start time
+  time_prev_ = 0;
+  
+  // Set NIS
+  NIS_radar_ = 0;
+  NIS_laser_ = 0;
+  
 }
 
 UKF::~UKF() {}
@@ -69,6 +99,70 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   Complete this function! Make sure you switch between lidar and radar
   measurements.
   */
+  if (!init) {
+    
+    if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+      double rho = meas_package.raw_measurements_(0);
+      double phi = meas_package.raw_measurements_(1);
+      double rhodot = meas_package.raw_measurements_(2);
+      
+      // polar to cartesian - r * cos(angle) for x and r * sin(angle) for y
+      // ***** Middle value for 'v' can be tuned *****
+      x_ << rho * cos(phi), rho * sin(phi), 4, rhodot * cos(phi), rhodot * sin(phi);
+      
+      //state covariance matrix
+      //***** values can be tuned *****
+      P_ << std_radr_*std_radr_, 0, 0, 0, 0,
+            0, std_radr_*std_radr_, 0, 0, 0,
+            0, 0, 1, 0, 0,
+            0, 0, 0, std_radphi_, 0,
+            0, 0, 0, 0, std_radphi_;
+      
+      // Create R for update noise later
+      R_radar << std_radr_*std_radr_, 0, 0,
+                 0, std_radphi_*std_radphi_, 0,
+                 0, 0, std_radrd_*std_radrd_;
+
+    }
+    else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
+      // Initialize state.
+      // ***** Last three values below can be tuned *****
+      x_ << meas_package.raw_measurements_(0), meas_package.raw_measurements_(1), 4, 0.5, 0.0;
+      
+      //state covariance matrix
+      //***** values can be tuned *****
+      P_ << std_laspx_*std_laspx_, 0, 0, 0, 0,
+            0, std_laspy_*std_laspy_, 0, 0, 0,
+            0, 0, 1, 0, 0,
+            0, 0, 0, 1, 0,
+            0, 0, 0, 0, 1;
+      
+      // Create R for update noise later
+      R_laser << std_laspx_*std_laspx_, 0,
+                 0, std_laspy_*std_laspy_;
+
+    }
+    // done initializing, no need to predict or update
+    init = true;
+    time_prev_ = meas_package.timestamp_;
+    return;
+    }
+    //compute the time elapsed between the current and previous measurements
+    //dt -  in seconds
+  double dt  = (meas_package.timestamp_ - time_prev_) / 1000000.0;
+  time_prev_ = meas_package.timestamp_;
+
+  // Predict
+  Prediction(dt);
+
+  // Measurement updates
+  if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+    UpdateRadar(meas_package);
+  } else {
+    UpdateLidar(meas_package);
+  }
+
+
 }
 
 /**
@@ -83,6 +177,7 @@ void UKF::Prediction(double delta_t) {
   Complete this function! Estimate the object's location. Modify the state
   vector, x_. Predict sigma points, the state, and the state covariance matrix.
   */
+  
 }
 
 /**
