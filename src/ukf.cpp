@@ -258,7 +258,8 @@ void UKF::Prediction(double delta_t) {
   //Tools tools;
   for(int i=0;i<2*n_aug_+1;i++){
     VectorXd x_diff=Xsig_pred_.col(i)-x_;
-    x_diff(3)=NormalizeAngle(x_diff(3));
+    //x_diff(3)=NormalizeAngle(x_diff(3));
+    x_diff(3)=atan2( sin(x_diff(3)),cos(x_diff(3)))
     P_+=weights_(i)*x_diff*x_diff.transpose();
   }
 }
@@ -371,6 +372,6 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
 }
-double UKF::NormalizeAngle(double phi){
-  return atan2( sin(phi),cos(phi));
- }
+// double UKF::NormalizeAngle(double phi){
+//   return atan2( sin(phi),cos(phi));
+//  }
