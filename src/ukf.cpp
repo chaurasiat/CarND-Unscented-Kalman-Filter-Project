@@ -12,7 +12,7 @@ using std::vector;
  * This is scaffolding, do not modify
  */
 UKF::UKF() {
-  cout<<"hello";
+  //cout<<"hello";
   // if this is false, laser measurements will be ignored (except during init)
   use_laser_ = true;
 
@@ -184,9 +184,7 @@ void UKF::Prediction(double delta_t) {
   //create sigma point matrix
   MatrixXd Xsig_ = MatrixXd(n_x_, 2 * n_x_ + 1);
   
-  //calculate square root of P
-  MatrixXd A_ = P_.llt().matrixL();
-  
+    
   //Calculate Augumented state vector and State covariance matrix
   VectorXd x_aug=VectorXd(7);
   MatrixXd P_aug=MatrixXd(7, 7);
@@ -255,10 +253,10 @@ void UKF::Prediction(double delta_t) {
   }
 //Predict the new state covariance matrix
   P_.fill(0.0);
-  //Tools tools;
+  
   for(int i=0;i<2*n_aug_+1;i++){
     VectorXd x_diff=Xsig_pred_.col(i)-x_;
-    //x_diff(3)=NormalizeAngle(x_diff(3));
+    
     x_diff(3)=atan2( sin(x_diff(3)),cos(x_diff(3)));
     P_+=weights_(i)*x_diff*x_diff.transpose();
   }
@@ -320,7 +318,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     while (z_diff(1)> M_PI) z_diff(1) -= 2.*M_PI;
     while (z_diff(1)<-M_PI) z_diff(1) += 2.*M_PI;
 
-    S = S + weights_(i) * z_diff * z_diff.transpose();
+    S+= weights_(i) * z_diff * z_diff.transpose();
   }
 
   //add measurement noise covariance matrix
